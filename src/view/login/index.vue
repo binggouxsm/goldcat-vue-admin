@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import dfr from '@/utils/validate'
+
 
 
 export default {
@@ -67,8 +67,8 @@ export default {
         password: '111111'
       },
       loginRules: {
-        username: [dfr.required, dfr.checkLen(4,20)],
-        password: [dfr.required, dfr.checkLen(6,20)]
+        username: [this.$vRules.required, this.$vRules.checkLen(4,20)],
+        password: [this.$vRules.required, this.$vRules.checkLen(6,20)]
       },
       passwordType: 'password',
       capsTooltip: false,
@@ -112,7 +112,7 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
@@ -124,7 +124,6 @@ export default {
               this.loading = false
             })
         } else {
-          console.log('error submit!!')
           return false
         }
       })

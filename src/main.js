@@ -17,6 +17,7 @@ import router from './router'
 import './icons' // icon
 import './permission' // permission control
 import './utils/error-log' // error log
+import global from './global'
 
 import * as filters from './filters' // global filters
 
@@ -42,6 +43,9 @@ Vue.use(Element, {
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
+
+// 设置全局组件
+Vue.use(global)
 
 Vue.config.productionTip = false
 

@@ -1,3 +1,4 @@
+@import "./reset.scss";
 @import './variables.scss';
 @import './mixin.scss';
 @import './transition.scss';
@@ -24,6 +25,7 @@ html {
   height: 100%;
   box-sizing: border-box;
 }
+
 
 fieldset{
   min-width: 0;
@@ -130,6 +132,11 @@ aside {
 }
 
 //main-container全局样式
+
+.main-container{
+  background-color: #f3f3f3;
+}
+
 .app-container {
   padding: 20px;
 
@@ -252,6 +259,14 @@ aside {
     top: -28px;
     right: -20px;
   }
+}
+
+.font-color-red {
+  color: #f1523a;
+}
+
+.font-color-green {
+  color: #14ba89;
 }
 
 

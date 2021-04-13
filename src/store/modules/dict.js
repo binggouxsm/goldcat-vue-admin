@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import store from '../index'
 
 const state = {
 
@@ -6,22 +7,28 @@ const state = {
 
 const mutations = {
   SET_CODE(state, payload) {
-    let {code, data} = payload
-    if(data && data.length > 0){
-      state[code] = data
-    }
+    this._vm.$set(state, payload.code, payload.data)
+  }
+}
+
+const getters = {
+  code: (state) =>(code) =>{
+    if(!state[code])
+      store.dispatch('dict/getCode',code)
+    return state[code]
   }
 }
 
 const actions ={
-  async getCode({ commit }, code){
-    if(state[code])
-      return state[code]
+  async getCode({ commit, state }, code){
     let data = await request({
       url: '/dictItem/'+code,
     })
-    commit('SET_CODE',{code,data})
-    return data
+    let map  = new Map();
+    data.forEach(item => map.set(item.code, item.name))
+
+    commit('SET_CODE',{code,data:map})
+    return map
   }
 }
 
@@ -29,5 +36,6 @@ export default {
   namespaced: true,
   state,
   mutations,
-  actions
+  actions,
+  getters
 }

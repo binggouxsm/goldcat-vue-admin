@@ -94,12 +94,25 @@ export const asyncRoutes = [
   {
     path: '/account',
     component: Layout,
+    hidden: true,
     children: [
       {
-        path: 'index',
+        path: ':bookId',
         component: () => import('@/view/account/index'),
         name: 'accountList',
         meta: { title: '账户', icon: 'icon'}
+      }
+    ]
+  },
+  {
+    path: '/book',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/view/book/index'),
+        name: 'bookList',
+        meta: { title: '账本', icon: 'account-book'}
       }
     ]
   },

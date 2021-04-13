@@ -1,3 +1,5 @@
+import {calcBitLength} from './utils'
+
 const rules = {
   required: { required: true, message: '必输项!', trigger: 'blur' },
   date: {
@@ -35,6 +37,20 @@ const rules = {
   checkLen: function(min,max) {
     return { min: min, max: max, message: `长度在 ${min} 到 ${max} 个字符`, trigger: 'blur' }
   },
+  checkBitLen: function (min,max) {
+    return {
+      validator(rule, value, callback){
+        if(value == null || value.length == 0)
+          return callback();
+        let len = calcBitLength(value)
+        if(!len ||  len < min || len>max )
+          return callback(new Error(`长度在 ${min} 到 ${max} 个字节`))
+        return callback();
+      },
+      trigger: 'blur'
+    }
+  },
+
 }
 
 export default rules
