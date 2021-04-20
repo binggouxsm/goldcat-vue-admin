@@ -35,7 +35,7 @@
     },
     methods:{
       toAccount(bookId){
-        this.$router.push('/account/'+bookId)
+        this.$router.push('/account/'+bookId+'/accType/0')
       }
     }
   }

@@ -38,6 +38,13 @@ module.exports = {
         pathRewrite:{
           '/api': '/'
         }
+      },
+      '/fileInfo': {
+        target: 'http://localhost:9080',
+        changeOrigin: true,
+        pathRewrite:{
+          '/fileInfo': '/fileInfo'
+        }
       }
     },
     overlay: {

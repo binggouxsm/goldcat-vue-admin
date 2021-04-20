@@ -94,25 +94,43 @@ export const asyncRoutes = [
   {
     path: '/account',
     component: Layout,
-    hidden: true,
+    redirect:'/account/1/accType/0',
+    meta: {
+      title: '账户',
+      icon: 'account-book'
+    },
     children: [
       {
-        path: ':bookId',
+        path: ':bookId/accType/:typeId',
         component: () => import('@/view/account/index'),
         name: 'accountList',
-        meta: { title: '账户', icon: 'icon'}
+        hidden: true,
+        meta: { title: '账户', icon: 'account-book'}
       }
     ]
   },
   {
     path: '/book',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
         component: () => import('@/view/book/index'),
         name: 'bookList',
         meta: { title: '账本', icon: 'account-book'}
+      }
+    ]
+  },
+  {
+    path: '/record',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/view/record/index'),
+        name: 'recordList',
+        meta: { title: '账单', icon: 'account-book'}
       }
     ]
   },

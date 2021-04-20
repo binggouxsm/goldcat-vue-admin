@@ -18,6 +18,14 @@ const rules = {
     },
     trigger: 'blur'
   },
+  digits: {
+    validator(rule, value, callback){
+      if(value == null || value.length == 0)
+        return callback();
+      return /^\d*$/.test(value) ? callback() : callback(new Error('请输入正整数!'));
+    },
+    trigger: 'blur'
+  },
   number: {
     validator(rule, value, callback){
       if(value == null || value.length == 0)

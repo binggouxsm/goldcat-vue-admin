@@ -1,9 +1,9 @@
 <template>
   <div class="app-container acc-container">
-    <el-tabs type="card">
-      <el-tab-pane label="概览">概览</el-tab-pane>
+    <el-tabs type="card" v-model="typeId">
+      <el-tab-pane label="概览" :name="'0'">概览</el-tab-pane>
       <template v-for="accountType in accountTypes">
-        <el-tab-pane :label="accountType.name">
+        <el-tab-pane :label="accountType.name" :name="accountType.typeId+''">
         <Overview :accountType="accountType" :bookId="bookId"/>
         </el-tab-pane>
       </template>
@@ -24,7 +24,8 @@
     data(){
       return {
         accountTypes: [],
-        bookId: this.$route.params.bookId
+        bookId: this.$route.params.bookId,
+        typeId: this.$route.params.typeId,
       }
     },
     created(){
@@ -33,8 +34,6 @@
       }).then((data) =>{
         this.accountTypes = data
       })
-
-
     },
     methods:{
 

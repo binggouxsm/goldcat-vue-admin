@@ -1,17 +1,21 @@
 <template>
   <div style="padding: 10px 20px;">
     <el-row class="summary">
-      <el-col :span="7" class="item">
+      <el-col :span="5" class="item">
         <p class="item-name">余额</p>
         <p class="item-num"><Money :value="summary.balanceSum"/></p>
       </el-col>
-      <el-col :span="7" class="item">
+      <el-col :span="5" class="item">
         <p class="item-name">流入</p>
         <p class="item-num font-color-red"><Money :value="summary.inSum"/></p>
       </el-col>
-      <el-col :span="7" class="item">
+      <el-col :span="5" class="item">
         <p class="item-name">流出</p>
         <p class="item-num font-color-green"><Money :value="summary.outSum"/></p>
+      </el-col>
+      <el-col :span="5" class="item">
+        <p class="item-name">转账</p>
+        <p class="item-num font-color-yellow"><Money :value="summary.transferSum"/></p>
       </el-col>
       <el-col :span="3">
         <el-button type="primary" @click="newAccount">新增账户</el-button>
@@ -24,6 +28,9 @@
       <el-form ref="accountForm" :model="currAccount" :rules="accountRules" label-width="100px">
         <el-form-item label="账户名称：" prop="name">
           <el-input  v-model="currAccount.name"></el-input>
+        </el-form-item>
+        <el-form-item label="账户号：" prop="accountNo">
+          <el-input v-model="currAccount.accountNo"></el-input>
         </el-form-item>
         <el-form-item label="币种：" prop="currency">
           <el-select  v-model="currAccount.currency">
@@ -40,21 +47,27 @@
       </div>
     </el-dialog>
 
+    <ImportDialog :account="currAccount" :dialogOpen="importDialogOpen"></ImportDialog>
+
+
     <template v-for="(account, index) in accounts">
       <el-card class="acc-info" >
         <div slot="header">
-          <span class="acc-name">{{ account.name }}</span>
+          <span class="acc-name">{{ account.name }}</span><span class="acc-no">{{ account.accountNo }}</span>
         </div>
         <div class="clearfix">
           <div class="acc-oper">
             <el-link icon="el-icon-edit" :underline="false" @click="editAccount(account)">编辑</el-link>
             <el-link icon="el-icon-delete" :underline="false" @click="deleteAccount(account)">删除</el-link>
-            <el-link icon="el-icon-upload2" :underline="false">导入</el-link>
-            <el-link icon="el-icon-document-checked" :underline="false">对账</el-link>
+            <el-link icon="el-icon-upload2" :underline="false" @click="openImportDialog(account)">导入</el-link>
+            <el-link icon="el-icon-document-checked" :underline="false" @click="jumpToRecord(account)">账单详情</el-link>
           </div>
           <div class="acc-amt">
             <div class="acc-amt-bal"><span class="acc-curr">{{ account.currency }}</span><Money :value="account.balance"/></div>
-            <div class="acc-amt-inout"><span>流入</span><Money class="font-color-red" :value="account.monthIn"/><span>流出</span><Money class="font-color-green" :value="account.monthOut"/></div>
+            <div class="acc-amt-inout">
+              <span>流入</span><Money class="font-color-red" :value="account.monthIn"/>
+              <span>流出</span><Money class="font-color-green" :value="account.monthOut"/>
+              <span>转账</span><Money class="font-color-yellow" :value="account.monthTransfer"/></div>
           </div>
         </div>
       </el-card>
@@ -68,6 +81,7 @@
 <script>
   import request from '@/utils/request'
   import { mapGetters } from 'vuex'
+  import ImportDialog from './importDialog'
 
   export default {
     name: "overview",
@@ -75,7 +89,9 @@
       accountType:Object,
       bookId: String
     },
-
+    components:{
+      ImportDialog
+    },
     data(){
       return {
         accounts: [],
@@ -83,9 +99,12 @@
         dialogOpen: false,
         accountRules:{
           name: [this.$vRules.required, this.$vRules.checkBitLen(4,180)],
+          accountNo:[this.$vRules.digits, this.$vRules.checkLen(1,100)],
           currency: [this.$vRules.required],
           balance:[this.$vRules.number]
         },
+        importDialogOpen: false,
+
       }
     },
     computed:{
@@ -96,13 +115,14 @@
         return this.code('CURRENCY')
       },
       summary(){
-        let balanceSum=0,inSum=0,outSum=0
+        let balanceSum=0,inSum=0,outSum=0,transferSum=0
         this.accounts.forEach((acc) =>{
           balanceSum+= acc.balance
           inSum+=acc.monthIn
           outSum+=acc.monthOut
+          transferSum+=acc.monthTransfer
         })
-        return {balanceSum,inSum,outSum}
+        return {balanceSum,inSum,outSum,transferSum}
       }
 
     },
@@ -141,8 +161,6 @@
             this.refresh()
           })
         })
-
-
       },
       saveAccount(){
         console.log(this.$refs.accountForm.validate)
@@ -164,6 +182,13 @@
             return false
           }
         })
+      },
+      openImportDialog(account){
+        this.currAccount = {...account}
+        this.importDialogOpen = true
+      },
+      jumpToRecord(account){
+
       }
     }
   }
@@ -202,6 +227,11 @@
     font-size: 18px;
     color: #312f2c;
     width: 100px;
+  }
+
+  .acc-no{
+    font-size: 12px;
+    color: #aaa;
   }
 
   .acc-curr{
